@@ -32,8 +32,10 @@
     siderLinks.addEventListener('click', (e) => { setCookie('history', e.target.href) })
 
     // 如果cookie中没有语言， 则需要设置
-    const lang = getCookie('lang')
-    if (!lang) { setCodeLanguage() }
+    let lang = getCookie('lang')
+    if (!lang) {
+        setCodeLanguage();
+    }
 
     document.addEventListener("keyup", function (event) {
         // 检测是否快速连按了g开头的组合键
@@ -53,8 +55,9 @@
         if (time < 400) { // 如果两次按键的时间间隔小于400毫秒，认为是快速连按
             switch (key) {
                 case 'g':
+                    lang = getCookie('lang')
                     if (isDoubleKeyG && lang) {
-                        toCode()
+                        toCode(lang)
                         isDoubleKeyG = false
                     } else if (isDoubleKeyG && !lang) {
                         setCodeLanguage()
@@ -91,9 +94,9 @@
         }
     });
     // 跳转到指定语言的算法代码
-    function toCode() {
+    function toCode(langType) {
         // 获取对要滚动到的元素的引用
-        let targetElement = page.querySelector('#' + getCookie('lang'));
+        let targetElement = page.querySelector('#' + langType);
         if (targetElement) { // 确保找到了元素
             // 使用scrollIntoView()方法将元素滚动到可见区域
             targetElement.scrollIntoView({
@@ -101,8 +104,7 @@
                 block: "start", // 可选：滚动到元素的顶部
             });
         } else {
-            const lang = getCookie('lang')
-            alert((lang !== 'c-2' ? lang : 'c#') + '语言的代码在此页面中不存在')
+            alert((langType !== 'c-2' ? langType : 'c#') + '语言的代码在此页面中不存在')
         }
     }
     // 文章跳转 flag:1表示下跳转到下一篇文章, 0表示上一篇文章
