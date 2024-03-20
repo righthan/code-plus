@@ -161,7 +161,6 @@
     function toRelevant() {
         // 获取对要滚动到的元素的引用
         let targetElements = page.querySelectorAll('#相关题目, #相关题目推荐');
-        console.log(targetElements)
         if (targetElements.length > 0) { // 确保找到了元素
             console.log(targetElements)
             // 使用scrollIntoView()方法将元素滚动到可见区域
