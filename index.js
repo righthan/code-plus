@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         code-plus
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.3
 // @description  解放鼠标，学码快人一步！ 代码随想录网站辅助工具, 支持快速跳转到指定语言类型, 跳转到leetcode对应题目, 首次打开跳转到上次位置，切换前后文章
 // @author       righthan
-// @match        https://www.programmercarl.com/*
+// @license      MIT
+// @match        https://*.programmercarl.com/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // ==/UserScript==
@@ -22,7 +23,8 @@
 
     // 跳转到上次浏览的网页
     let historyPath = getCookie('history')
-    if (historyPath && encodeURI(historyPath) !== location.href) {
+    // location.href条件:只在为根域名地址时跳转到历史(第一次打开的情况), 否则会导致无法跳转页面里的其他链接
+    if (historyPath && location.href === 'https://www.programmercarl.com/') {
         toPath(historyPath)
     } else {
         setCookie('history', location.href)
@@ -77,6 +79,9 @@
                 case 'c':
                     setCodeLanguage()
                     break
+                case 'r':
+                    toRelevant()
+                    break
                 case 'h':
                     alert(`
                     code-plus是一款网页操作快捷辅助工具
@@ -85,6 +90,7 @@
                     gj: 跳转到下一篇
                     gk: 跳转到上一篇
                     gl: 跳转到leetcode页面
+                    gr: 跳转到相关题目
                     gc: 设置代码语言(保存在网站的cookie中)
                     gh: 显示本帮助页面
                     其他功能: 打开网页时恢复上次的进度
@@ -93,6 +99,7 @@
             }
         }
     });
+
     // 跳转到指定语言的算法代码
     function toCode(langType) {
         // 获取对要滚动到的元素的引用
@@ -107,6 +114,7 @@
             alert((langType !== 'c-2' ? langType : 'c#') + '语言的代码在此页面中不存在')
         }
     }
+
     // 文章跳转 flag:1表示下跳转到下一篇文章, 0表示上一篇文章
     function changeArticle(flag) {
         let optionButton = sider.querySelectorAll('div[title]')
@@ -123,6 +131,7 @@
             alert("当前页面可能没有LeetCode题目")
         }
     }
+
     // 设置代码语言
     function setCodeLanguage() {
         const supportLang = ['java', 'python', 'go', 'rust', 'javascript', 'typescript', 'swift', 'ruby', 'c', 'php', 'kotlin', 'scala', 'c#']
@@ -138,6 +147,7 @@
             }
         }
     }
+
     // 跳转对对应路径的页面
     function toPath(path) {
         setCookie('history', path)
@@ -146,6 +156,24 @@
         const subPath = paths[paths.length - 1].split('.html')[0]
         clickAndScrollNavLink(subPath)
     }
+
+    // 跳转到相关题目
+    function toRelevant() {
+        // 获取对要滚动到的元素的引用
+        let targetElements = page.querySelectorAll('#相关题目, #相关题目推荐');
+        console.log(targetElements)
+        if (targetElements.length > 0) { // 确保找到了元素
+            console.log(targetElements)
+            // 使用scrollIntoView()方法将元素滚动到可见区域
+            targetElements[0].scrollIntoView({
+                behavior: "smooth", // 可选：使滚动平滑进行
+                block: "start", // 可选：滚动到元素的顶部
+            });
+        } else {
+            alert('无相关题目')
+        }
+    }
+
     // 点击对应链接, 并且滚动侧边导航
     function clickAndScrollNavLink(path) {
         let targetElement = siderLinks.querySelector(`a[href*="${path}"]`)
@@ -158,6 +186,7 @@
             document.querySelector('.sidebar').scrollBy({ top: -300 })
         }
     }
+
     // 解析特定的cookie值
     function getCookie(cookieName) {
         const allCookies = document.cookie;
@@ -175,6 +204,7 @@
         }
         return "";
     }
+
     function setCookie(key, val) {
         document.cookie = `${key}=${val}; expires=Fri, 31 Dec 9999 23:59:59 GMT`
     }
