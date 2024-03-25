@@ -82,6 +82,9 @@
                 case 'r':
                     toRelevant()
                     break
+                case 't':
+                    toTips()
+                    break
                 case 'h':
                     alert(`
                     code-plus是一款网页操作快捷辅助工具
@@ -90,6 +93,7 @@
                     gj: 跳转到下一篇
                     gk: 跳转到上一篇
                     gl: 跳转到leetcode页面
+                    gt: 跳转到思路题目
                     gr: 跳转到相关题目
                     gc: 设置代码语言(保存在网站的cookie中)
                     gh: 显示本帮助页面
@@ -162,7 +166,6 @@
         // 获取对要滚动到的元素的引用
         let targetElements = page.querySelectorAll('#相关题目, #相关题目推荐');
         if (targetElements.length > 0) { // 确保找到了元素
-            console.log(targetElements)
             // 使用scrollIntoView()方法将元素滚动到可见区域
             targetElements[0].scrollIntoView({
                 behavior: "smooth", // 可选：使滚动平滑进行
@@ -170,6 +173,21 @@
             });
         } else {
             alert('无相关题目')
+        }
+    }
+
+    // 跳转到思路
+    function toTips() {
+        // 获取对要滚动到的元素的引用
+        let targetElements = page.querySelectorAll('#思路');
+        if (targetElements.length > 0) { // 确保找到了元素
+            // 使用scrollIntoView()方法将元素滚动到可见区域
+            targetElements[0].scrollIntoView({
+                behavior: "smooth", // 可选：使滚动平滑进行
+                block: "start", // 可选：滚动到元素的顶部
+            });
+        } else {
+            alert('当前页面没有思路内容')
         }
     }
 
